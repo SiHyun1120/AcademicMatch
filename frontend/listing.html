@@ -1,191 +1,49 @@
+<!-- listingg.html -->
+
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모임 찾기 사이트 목록</title>
+    <title>스터디 목록</title>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        a {
-            text-decoration: none;
-            color: #3498db;
-        }
-
-        a:hover {
-            text-decoration: underline;
+        /* 추가된 CSS 스타일 */
+        ul#studyList {
+            list-style: none;  /* 리스트 항목의 기본 스타일(점)을 없앰 */
+            padding: 0;  /* 리스트의 padding을 0으로 설정 */
         }
     </style>
 </head>
 <body>
-    <h1>스터디 목록</h1>
-</div>
-<div class="result-container">
-    <div id="local-wrap" class="articles-wrap">
-        <p class="article-kind local-article-kind">동네정보</p>
-        <article class="story-article" data-next-page="2">
-            <a class="story-article-link" href="/story_articles/691979640">
-                <div class="article-photo">
-                    <img alt="일본어 스터디 인원 구합니다." src="https://dnvefa72aowie.cloudfront.net/community/community/20231222/7e083224-7591-4d93-9525-5014d2692fd0.png?&amp;f=webp"/>
-                </div>
-                <p class="story-article-content">
-                    빈번한 업로드로 인해 상당한 실례를 무릅쓰고 재업로드합니다.
-현재 <mark>스터디</mark>
-                    인원은 필자 포함 2명이고, 같이 <mark>스터디</mark>
-                    하실 분 모집하고 있습니다. 모집하고자 하는 인원은 다음과 같습니다.
+    <h1>인프런 스터디 목록</h1>
 
-1. JLPT를 목표로 하...
+    <ul id="studyList">
+        {% for title, url, content in zipped_data %}
+            <li>
+                <strong><a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ title }}</a></strong>
+                <br>
+                
+                <br>
+                Content: {{ content|slice:":10" }}
+            </li>
+            <hr style="margin-top: 10px; margin-bottom: 10px;">
+        {% endfor %}
+    </ul>
 
-                </p>
-                <p class="article-region-name">경북 예천군 호명면
-</p>
-                <span class="article-sub-info">
-                    <span class="article-comment">
-                        <img class="chat-icon" alt="Chat count" src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/message-78e946f283b8e1e127133cbdc4195faaed6bd0e45cf697eb3430030d40329d38.svg"/>10
+    <!-- Django에서 전달한 데이터를 HTML의 data 속성을 통해 삽입 -->
+    <div id="studyListData"
+         data-a-titlelist="{{ a_titlelist|safe }}"
+         data-a-urllist="{{ a_urllist|safe }}"
+         data-contentlist="{{ contentlist|safe }}"></div>
 
-                    </span>
-                    <span class="article-watch">
-                        <img class="watch-icon" alt="Watch count" src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/like-8111aa74d4b1045d7d5943a901896992574dd94c090cef92c26ae53e8da58260.svg"/>1
+    <!-- study_list.js를 불러올 때 전역 변수를 사용하지 않습니다. -->
+    <script src="{% static 'js/study_list.js' %}"></script>
+</body>
+</html>
 
-                    </span>
-                </span>
-            </a>
-        </article>
-        <hr class="article-hr-border"/>
-        <hr class="mobile-article-hr-border"/>
-        <article class="story-article" data-next-page="2">
-            <a class="story-article-link" href="/story_articles/698843161">
-                <p class="story-article-content">
-                    안녕하세요!
-홍대/합정/상수 부근에서 <mark>스터디</mark>
-                    같이 하실 분 모집하고 있습니다
-퇴근 후 7시-11시 사이가 될 거 같고
-주 4-5회 정도 생각 중입니다
-
-장소는 인근 <mark>스터디</mark>
-                    카페, 카페구요
-3-4명 정도 모여서 ...
-
-                </p>
-                <p class="article-region-name">서울 마포구 상수동
-</p>
-                <span class="article-sub-info">
-                    <span class="article-comment">
-                        <img class="chat-icon" alt="Chat count" src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/message-78e946f283b8e1e127133cbdc4195faaed6bd0e45cf697eb3430030d40329d38.svg"/>2
-
-                    </span>
-                </span>
-            </a>
-        </article>
-        <hr class="article-hr-border"/>
-        <hr class="mobile-article-hr-border"/>
-        <article class="story-article" data-next-page="2">
-            <a class="story-article-link" href="/story_articles/704473688">
-                <p class="story-article-content">
-                    수능공부<mark>스터디</mark>
-                    다른사람들이많이하길래한번만들어봣어요..
-할사람잇으려나
-18~21살 수능준비하는사람
-정시파이터환영
-경성대 에프엔씨<mark>스터디</mark>
-                    카페 or 용호동 경성대 <mark>스터디</mark>
-                    카페 다모이면 같이 시간정해봐요
-
-                </p>
-                <p class="article-region-name">부산 남구 용호동
-</p>
-                <span class="article-sub-info">
-                    <span class="article-watch">
-                        <img class="watch-icon" alt="Watch count" src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/like-8111aa74d4b1045d7d5943a901896992574dd94c090cef92c26ae53e8da58260.svg"/>1
-
-                    </span>
-                </span>
-            </a>
-        </article>
-        <hr class="article-hr-border"/>
-        <hr class="mobile-article-hr-border"/>
-        <article class="story-article" data-next-page="2">
-            <a class="story-article-link" href="/story_articles/706295954">
-                <p class="story-article-content">
-                    취미로 프랑스어 공부중인데 혼자서 하려니 헷갈리는것도 많고 학원같은경우 시간이 애매해서 혹시 같이 <mark>스터디</mark>
-                    하실 분 계신가요?! 카페나 스카에서 <mark>스터디</mark>
-                    하실분😊
-
-                </p>
-                <p class="article-region-name">경기도 수원시 권선구 세류2동
-</p>
-                <span class="article-sub-info"></span>
-            </a>
-        </article>
-        <hr class="article-hr-border"/>
-        <hr class="mobile-article-hr-border"/>
-        <article class="story-article" data-next-page="2">
-            <a class="story-article-link" href="/story_articles/707271957">
-                <p class="story-article-content">업로드 실례합니다.
-현재 인원은 필자 포함 3명이며, 다음과 같은 인원을 모집 중에 있습니다.
-
-1. JLPT를 목표로 하시는 분(필자는 취업 목적 및 5년전에 일본에서 취득하였으나, 자격증 원본이 사라져 재취...
-</p>
-                <p class="article-region-name">경북 예천군 호명면
-</p>
-                <span class="article-sub-info"></span>
-            </a>
-        </article>
-        <hr class="article-hr-border"/>
-        <hr class="mobile-article-hr-border"/>
-        <article class="story-article" data-next-page="2">
-            <a class="story-article-link" href="/story_articles/707336724">
-                <p class="story-article-content">
-                    아침 기상하여 의정부역 24시간 운영하는 카페에서 06:00~07:30 까지 각자 공부나 독서 혹은 <mark>스터디</mark>
-                    등 할일하고 헤어지는 모임을 운영하려하는데 참여하고싶은 분들 댓글 주세요. 저는 32살 직장인 남자입니다.
-
-                </p>
-                <p class="article-region-name">경기도 의정부시 의정부2동
-</p>
-                <span class="article-sub-info">
-                    <span class="article-comment">
-                        <img class="chat-icon" alt="Chat count" src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/message-78e946f283b8e1e127133cbdc4195faaed6bd0e45cf697eb3430030d40329d38.svg"/>2
-
-                    </span>
-                    <span class="article-watch">
-                        <img class="watch-icon" alt="Watch count" src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/like-8111aa74d4b1045d7d5943a901896992574dd94c090cef92c26ae53e8da58260.svg"/>1
-
-                    </span>
-                </span>
-            </a>
-        </article>
-    </div>
-    <div onclick="moreResult(this, 'local', 'local-wrap');" class="more-btn" data-o-keyword="스터디" data-next-page="2">
-        <span class="more-text">더보기</span>
-        <div class="more-loading">
-            <div class="loader"></div>
-        </div>
-    </div>
-</div>
-</section>
-<script>
-$(document).ready(function() {
-    facebookClickEvent("Search");
-    facebookClickEvent("ViewContent");
-});
-</script>
 <a href = "{% url 'searching' %}"><button style = "width:250px;height:50px;font-size:25px;">맞춤 스터디 찾기</button> 
 </body>
 </html>
