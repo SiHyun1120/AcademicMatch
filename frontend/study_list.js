@@ -1,4 +1,4 @@
-// study_list.js
+// app / statics 또는 static / study_list.js
 
 function appendStudyItem(title, url, content) {
     // 동적으로 리스트 아이템 추가하는 코드
