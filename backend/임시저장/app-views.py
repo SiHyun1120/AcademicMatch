@@ -31,66 +31,51 @@ def listing(request):
 
 @csrf_exempt 
 def searching(request):
-    return render(request, '/searching.html')
-    '''if request.method =='GET':
-        context = {}
-        return render(request, 'myapp/search.html', context)
+        return render(request, 'myapp/search.html')
 
-    else :
-        topics.append({'title':request.POST['title'],'body':request.POST['body']})     
-
-        return redirect('/result/')'''
+def show_result(request):
+        #================ ML 모델 ===================
         
+        #크롤링 데이터 불러오기
+        path= os.path.join(settings.MODEL_ROOT,'inflearn_data_ing.csv')
+        df=pd.read_csv(path)
+        df = df.drop_duplicates(subset=['content'],keep='first').reset_index(drop=True)
+        
+        #사용자 데이터 추가
+        title_val=request.GET.get('title_val')
+        content_val=request.GET.get('content_val')
 
-def result(request):
-    input_title = request.GET('input_title')
-    print(input_title)
-    class Recommend(views.APIView):
-        def post(self,request):
+        new_row ={'content':content_val,'title':title_val}
+        
+        df=df.append(new_row,ignore_index=True)
 
-            #크롤링 데이터 불러오기
-            path= os.path.join(settings.MODEL_ROOT,'inflearn_data_ing.csv')
-            df=pd.read_csv(path)
-            df = df.drop_duplicates(subset=['content'],keep='first').reset_index(drop=True)
+        # TF-IDF
+        contents = df["content"].tolist()
 
-            try:
-                #사용자가 보낸 데이터 받기
-                new_title = request.data.pop('title')
-                new_content = request.data.pop('content')
+        uni_tfidf = text.TfidfVectorizer()
+        uni_matrix = uni_tfidf.fit_transform(contents) # 학습
+        uni_sim = cosine_similarity(uni_matrix)
 
-                new_row ={'content':new_content,'title':new_title}
+        #추천 시스템
+        def recommend_articles_index(xx, df):
+            a = df.iloc[xx.argsort()[::-1][1:2], :]['content']  # 추천 기사들의 본문들
+            b = a.index[df.iloc[xx.argsort()[::-1][0], :]['content'] != a]  # 같은 내용은 추천에서 제외
+            return b.tolist()
 
-                # TF-IDF
-                contents = df["content"].tolist()
+        df['Recommended Index'] = [recommend_articles_index(x, df) for x in uni_sim]
+        
+        k =len(df)-1
+        #=============== 결과 =============
+        #predictions=df.iloc[df['Recommended Index'][k]][['title','content','url']].values
+        
+        title = df.iloc[df['Recommended Index'][k]][['title','content']].values[0][0]
+        content = df.iloc[df['Recommended Index'][k]][['title','content']].values[0][1]
 
-                uni_tfidf = text.TfidfVectorizer()
-                uni_matrix = uni_tfidf.fit_transform(contents) # 학습
-                uni_sim = cosine_similarity(uni_matrix)
-
-
-                #추천 시스템
-                def recommend_articles_index(xx, df):
-                    a = df.iloc[xx.argsort()[::-1][1:6], :]['content']  # 추천 기사들의 본문들
-                    b = a.index[df.iloc[xx.argsort()[::-1][0], :]['content'] != a]  # 같은 내용은 추천에서 제외
-                    return b.tolist()
-
-                df['Recommended Index'] = [recommend_articles_index(x, df) for x in uni_sim]
-                
-                k =len(df)-1
-                predictions=df.iloc[df['Recommended Index'][k]][['title','content','url']].values
-                context = {'predictions' : predictions}
-            except Exception as err:
-                return Response(str(err),status=status.HTTP_400_BAD_REQUEST)
+        context ={'title' : title,
+                'content' : content
+                }
             
-            return Response(predictions,status =status.HTTP_200_OK)
-
-    
-    '''global topics
-
-    article=''
-    for topic in topics:
-        article+=f'<h1>{topic["title"]}</h1>{topic["body"]}'
-'''
+        return JsonResponse(context)
 
 #크롤링 - listing에 데이터 띄우기
 
