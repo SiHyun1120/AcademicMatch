@@ -16,6 +16,8 @@
         </form>
         <div id="div_title"></div>
         <div id="div_content"></div>
+        <div id="div_url"></div>
+
 
     </div>
 
@@ -33,7 +35,7 @@
             type: 'GET',
             data: {
                 'title_val':title_val.value,
-                'content_val' : content_val.value
+                'content_val' : content_val.value,
             },
             datatype: 'json', // 서버에서 반환되는 데이터 json 형식
             
@@ -44,6 +46,9 @@
 
                 var element2=document.getElementById('div_content');
                 document.all('div_content').innerHTML=data['content'];
+
+                var element3=document.getElementById('div_url');
+                document.all('div_url').innerHTML=data['url'];
             }
         });
         }
