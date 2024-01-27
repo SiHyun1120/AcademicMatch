@@ -1,9 +1,13 @@
+from django.shortcuts import render,HttpResponse,redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 #REST_FRAMEWORK TEST
 from rest_framework import viewsets
 from myapp.serializers import RecommendSerializer
 from myapp.models import RecommendModel
-#============ML TEST ===================
-import os 
+
+import os
 import pickle
 import numpy as np
 import pandas as pd
@@ -14,20 +18,11 @@ from rest_framework.response import Response
 from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import cosine_similarity
 
-
-from django.shortcuts import render,HttpResponse,redirect
-from django.views.decorators.csrf import csrf_exempt
-
 topics =[]
 
 def main(request):
     context={}
     return render(request, 'myapp/main.html', context)
-
-
-def listing(request):
-    context = {}
-    return render(request, 'myapp/listing.html', context)
 
 @csrf_exempt 
 def searching(request):
@@ -68,14 +63,17 @@ def show_result(request):
         #=============== 결과 =============
         #predictions=df.iloc[df['Recommended Index'][k]][['title','content','url']].values
         
-        title = df.iloc[df['Recommended Index'][k]][['title','content']].values[0][0]
-        content = df.iloc[df['Recommended Index'][k]][['title','content']].values[0][1]
+        title = df.iloc[df['Recommended Index'][k]][['title','content','url']].values[0][0]
+        content = df.iloc[df['Recommended Index'][k]][['title','content','url']].values[0][1]
+        url = df.iloc[df['Recommended Index'][k]][['title','content','url']].values[0][2]
 
         context ={'title' : title,
-                'content' : content
+                'content' : content,
+                'url' : url
                 }
             
         return JsonResponse(context)
+
 
 #크롤링 - listing에 데이터 띄우기
 
@@ -111,7 +109,6 @@ def crawl_inflearn():
 
     return a_titlelist, a_urllist, contentlist
 
-
 def listing(request):
     a_titlelist, a_urllist, contentlist = crawl_inflearn()
 
@@ -119,5 +116,4 @@ def listing(request):
     zipped_data = zip(a_titlelist, a_urllist, contentlist)
 
     context = {'zipped_data': zipped_data}
-    return render(request, 'listing.html', context)
-     
+    return render(request, 'myapp/listing.html', context)
