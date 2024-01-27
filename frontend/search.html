@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +9,44 @@
 <body>
     <h1>Academicmatch</h1>
     <div> 
-        <input type = "text" style="width : 500px; height: 50px; font-size: 25px;">
-        <button style = "width:250px;height:50px;font-size:25px;">찾기</button> 
+        <form action="/searching/" method="post">
+            <p><input type="text" name="title" placeholder="스터디 모집 제목을 입력하세요 !" style="width : 500px; height: 50px; font-size: 25px;"></p>
+            <p><textarea name="body" placeholder="스터디 모집글을 작성하세요!" style="width : 500px; height: 150px; font-size: 25px;"></textarea></p>
+            <p><button class="send_btn" onclick="show_result()" type="button" style = "width:250px;height:50px;font-size:25px;">제출!</button></p>
+        </form>
+        <div id="div_title"></div>
+        <div id="div_content"></div>
+
     </div>
-    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        function show_result(){
+        var title_val = document.querySelector('input[name="title"]');
+        var content_val = document.querySelector('textarea[name="body"]');
+
+        console.log(title_val.value);
+        console.log(content_val.value);
+
+        $.ajax({
+            url: 'show_result',
+            type: 'GET',
+            data: {
+                'title_val':title_val.value,
+                'content_val' : content_val.value
+            },
+            datatype: 'json', // 서버에서 반환되는 데이터 json 형식
+            
+            success: function(data){ // AJAX 통신이 성공하면 해당 과일의 영어 단어가 출려되도록
+                console.log(data['title']) // 콘솔에서 확인
+                var element1=document.getElementById('div_title');
+                document.all('div_title').innerHTML=data['title'];
+
+                var element2=document.getElementById('div_content');
+                document.all('div_content').innerHTML=data['content'];
+            }
+        });
+        }
+    </script>
 </body>
 </html>
